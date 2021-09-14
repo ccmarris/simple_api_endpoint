@@ -1,0 +1,68 @@
+{
+    "version": "6.0",
+    "name": "Network Operation with EA",
+    "comment": "Will notify on Zone Change",
+    "type": "REST_EVENT",
+    "event_type": ["NETWORK_IPV4","DNS_RECORD","DNS_ZONE"],
+    "action_type": "Send message",
+    "content_type": "application/json",
+    "vendor_identifier": "SIMPLE_API_DEMO",
+    "transport": {
+        "path": ""
+    },
+    "quoting": "XML",
+    "steps":
+    [
+        {
+            "name": "stop if EA was not set or set to false",
+            "operation": "CONDITION",
+            "condition": {
+                "condition_type": "AND",
+                "statements": [
+                    {
+                        "left": "${E:A:values{extattrs}{BobsTool}{value}}",
+                        "op": "!=",
+                        "right": "true"
+                    }
+                ],
+                "stop": true
+            }
+        },
+
+
+
+        {
+            "name": "stop if it is not a network insert",
+            "operation": "CONDITION",
+            "condition": {
+                "condition_type": "AND",
+                "statements": [
+                    {
+                        "left": "${E:A:operation_type}",
+                        "op": "!=",
+                        "right": "INSERT"
+                    }
+                ],
+                "stop": true
+            }
+        },
+
+        {
+            "name": "Send Data",
+            "operation": "POST",
+            "transport": {
+                "path": ""
+            },
+            "body_list": [
+                "{",
+                    "\"Network Container\":\"${E:A:values{network_container}}\",",
+                    "\"Network\":\"${E:A:values{network}}\",",
+                    "\"Operation Type\":\"${E:A:operation_type}\",",
+                    "}",
+                "}"
+            ],
+
+            "parse": "JSON"
+        }
+    ]
+}

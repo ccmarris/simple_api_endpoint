@@ -11,7 +11,7 @@
 
  Author: Chris Marrison
 
- Date Last Updated: 20210913
+ Date Last Updated: 2021091
 
  Todo:
 
@@ -42,7 +42,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 
 '''
-__version__ = '0.0.2'
+__version__ = '0.0.3'
 __author__ = 'Chris Marrison'
 __author_email__ = 'chris@infoblox.com'
 
@@ -68,6 +68,6 @@ def receive_data():
 	'''
 	data = json.loads(flask.request.data)
 	records.append(data)
-	return data
+	return flask.jsonify(data)
 
 app.run(host="0.0.0.0")
