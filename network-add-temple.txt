@@ -1,0 +1,74 @@
+{
+    "version": "1.0",
+    "name": "Test Add a network",
+    "comment": "Will add a network",
+    "type": "REST_EVENT",
+    "event_type": [
+        "NETWORK_IPV4"
+    ],
+    "action_type": "Show network add event",
+    "content_type": "application/json",
+    "vendor_identifier": "SIMPLE_API_DEMO",
+    "quoting": "XML",
+    "steps":
+    [
+
+        {
+            "name": "assignLVars",
+            "operation": "NOP",
+            "body_list": [
+                "${XC:ASSIGN:{L:NetView}:{S:default}}"
+            ]
+        },
+
+        {
+            "name": "stop if it is not a network insert",
+            "operation": "CONDITION",
+            "condition": {
+                "condition_type": "AND",
+                "statements": [
+                    {
+                        "left": "${E:A:operation_type}",
+                        "op": "!=",
+                        "right": "INSERT"
+                    }
+                ],
+                "stop": true
+            }
+        },
+
+
+        {
+            "name": "add a network",
+            "operation": "POST",
+            "transport": {
+                "path": "/"
+            },
+            "body_list": [
+                "{",
+                "\"network\": \"${E:A:values{network}}\",",
+                "\"network_view\": \"${L:A:NetView}\",",
+                "\"comment\": \"Inserted via Outbound API at ${UT::TIME}\"",
+                "}"
+            ],
+            "parse": "JSON"
+        },
+
+        {
+            "name": "checkAddNetwork",
+            "operation": "CONDITION",
+            "condition": {
+                "condition_type": "OR",
+                "statements": [
+                    {
+                        "left": "${R::RC}",
+                        "op": "!=",
+                        "right": "201"
+                    }
+                ],
+                "stop": true
+            }
+        }
+
+    ]
+}
